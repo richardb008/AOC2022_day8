@@ -23,9 +23,11 @@ void ForestAnalyzer::ReadFileToBuffer( void )
     while (std::getline(inputFileHandler, line))
     {
         std::vector<int> row;
-        row.reserve( line.size() );
+        unsigned int lineLength = line.size();
 
-        for (unsigned int i = 0; i < line.size(); i++)
+        row.reserve( lineLength );
+
+        for (unsigned int i = 0; i < lineLength; i++)
         {
             row.emplace_back(line[i] - '0');
         }
@@ -54,12 +56,15 @@ ForestAnalyzer::~ForestAnalyzer()
 int VisibleTreeCounter( std::vector<std::vector<int>> & buffer )
 {
     /*Initializing with number of trees on edge*/
-    
-    int numOfVisibleTrees = 2 * buffer.size() + 2 * (buffer[0].size() - 2);
+   
+    unsigned int row = buffer.size();
+    unsigned int col = buffer[0].size();
 
-    for (unsigned int i = 1; i < (buffer.size() - 1); i++)
+    int numOfVisibleTrees = 2 * row + 2 * (col - 2);
+
+    for (unsigned int i = 1; i < (row - 1); i++)
     {
-        for (unsigned int j = 1; j < (buffer[0].size() - 1); j++)
+        for (unsigned int j = 1; j < (col - 1); j++)
         {
             /*Checking elements on top*/
             bool isTreeVisible = true;
@@ -79,7 +84,7 @@ int VisibleTreeCounter( std::vector<std::vector<int>> & buffer )
 
             /*Checking elements on bottom*/
             isTreeVisible = true;
-            for (unsigned int k = buffer.size() - 1; k > i; k--)
+            for (unsigned int k = row - 1; k > i; k--)
             {
                 if (buffer[k][j] >= buffer[i][j])
                 {
@@ -111,7 +116,7 @@ int VisibleTreeCounter( std::vector<std::vector<int>> & buffer )
 
             /*Checking elements on right*/
             isTreeVisible = true;
-            for (unsigned int k = buffer[0].size() - 1; k > j; k--)
+            for (unsigned int k = col - 1; k > j; k--)
             {
                 if (buffer[i][k] >= buffer[i][j])
                 {
@@ -130,10 +135,12 @@ int VisibleTreeCounter( std::vector<std::vector<int>> & buffer )
 int ScenicScoreCalculator( std::vector<std::vector<int>> & buffer )
 {
     int maxScenicScore = 0;
+    unsigned int row = buffer.size();
+    unsigned int col = buffer[0].size();
 
-    for (unsigned int i = 1; i < (buffer.size() - 1); i++)
+    for (unsigned int i = 1; i < (row - 1); i++)
     {
-        for (unsigned int j = 1; j < (buffer[0].size() - 1); j++)
+        for (unsigned int j = 1; j < (col - 1); j++)
         {
             int numOfVisibleTreesOnTop = 0;
             for (int k = i - 1; k >= 0; k--)
@@ -144,7 +151,7 @@ int ScenicScoreCalculator( std::vector<std::vector<int>> & buffer )
             }
 
             int numOfVisibleTreesOnBottom = 0;
-            for (unsigned int k = i + 1; k < buffer.size(); k++)
+            for (unsigned int k = i + 1; k < row; k++)
             {
                 numOfVisibleTreesOnBottom++;
                 if (buffer[k][j] >= buffer[i][j])
@@ -160,7 +167,7 @@ int ScenicScoreCalculator( std::vector<std::vector<int>> & buffer )
             }
 
             int numOfVisibleTreesOnRight = 0;
-            for (unsigned int k = j + 1; k < buffer[0].size(); k++)
+            for (unsigned int k = j + 1; k < col; k++)
             {
                 numOfVisibleTreesOnRight++;
                 if (buffer[i][k] >= buffer[i][j])
